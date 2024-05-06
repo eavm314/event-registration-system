@@ -9,5 +9,5 @@ export const dataSource: TypeOrmModuleOptions = {
   password: db.password,
   database: db.database,
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
-  synchronize: env.environment === 'development' ? true : false,
+  synchronize: env.environment === 'develop' ? true : false,
 };
