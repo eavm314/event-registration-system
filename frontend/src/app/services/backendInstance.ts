@@ -1,6 +1,5 @@
 "use server"
 
-import { data } from "autoprefixer";
 import axios from "axios";
 import { cookies } from "next/headers";
 
@@ -10,7 +9,7 @@ const getJwt = () => {
 }
 
 export const backendInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+  baseURL: process.env.BACKEND_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

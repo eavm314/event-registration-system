@@ -1,13 +1,13 @@
-import { Role, UserInfoModel } from "@/src/app/models/userInfoModel"
-import Image, { StaticImageData } from "next/image";
+import { Role, UserInfoModel } from "@/src/app/models/userInfoModel";
+import Image from "next/image";
 
-import NoProfile from "@/public/NoProfile.webp"
-import { Dispatch, useEffect, useRef, useState } from "react";
+import NoProfile from "@/public/NoProfile.webp";
 import PrimaryButton from "@/src/app/components/PrimaryButton";
-import { downloadProfilePhoto, uploadProfilePhoto } from "@/src/app/services/userService";
-import ModalPage from "@/src/app/modals/ModalPage";
-import ModalMessage from "@/src/app/modals/ModalMessage";
 import { getImageUrl } from "@/src/app/helpers/getImageUrl";
+import ModalMessage from "@/src/app/modals/ModalMessage";
+import ModalPage from "@/src/app/modals/ModalPage";
+import { downloadPhotoS3, uploadPhotoS3 } from "@/src/app/services/userService";
+import { Dispatch, useEffect, useRef, useState } from "react";
 
 interface Props {
   userInfo: UserInfoModel;
@@ -38,8 +38,9 @@ const InfoPerfil = ({ userInfo, setLoading }: Props) => {
 
     const form = new FormData();
     form.append("profilePhoto", newPhoto as File);
+    form.append("userCode", userInfo.userCode);
 
-    const result = await uploadProfilePhoto(form);
+    const result = await uploadPhotoS3(form);
     if (result) {
       setProfilePhotoUrl(URL.createObjectURL(newPhoto as File));
       setInfoMessage("Su foto de perfil se ha actualizado exitosamente.");
@@ -53,7 +54,9 @@ const InfoPerfil = ({ userInfo, setLoading }: Props) => {
 
   const getProfilePhoto = async () => {
     if (userInfo.profilePhoto) {
-      const base64 = await downloadProfilePhoto(userInfo.profilePhoto);
+      // const base64 = await downloadProfilePhoto(userInfo.profilePhoto);
+      // const photoUrl = getImageUrl(base64);
+      const base64 = await downloadPhotoS3(userInfo.profilePhoto);
       const photoUrl = getImageUrl(base64);
       setProfilePhotoUrl(photoUrl);
     }
