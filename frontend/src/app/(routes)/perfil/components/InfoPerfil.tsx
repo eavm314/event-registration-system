@@ -56,9 +56,12 @@ const InfoPerfil = ({ userInfo, setLoading }: Props) => {
     if (userInfo.profilePhoto) {
       // const base64 = await downloadProfilePhoto(userInfo.profilePhoto);
       // const photoUrl = getImageUrl(base64);
-      const base64 = await downloadPhotoS3(userInfo.profilePhoto);
-      const photoUrl = getImageUrl(base64);
-      setProfilePhotoUrl(photoUrl);
+      const base64: string = await downloadPhotoS3(userInfo.profilePhoto);
+      // console.log(base64)
+      if (!base64.startsWith("<?xml")) {
+        const photoUrl = getImageUrl(base64);
+        setProfilePhotoUrl(photoUrl);
+      }
     }
     setLoading(false);
   }
