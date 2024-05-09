@@ -1,23 +1,25 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import { TeamCardModel } from "../../models/teamCardModel";
 import InfoImage from "../../components/InfoImage";
-import ModalPage from "../../modals/ModalPage";
-import ModalLoading from "../../modals/ModalLoading";
-import { getTeamInfo } from "../../services/basicDataService";
-import { downloadProfilePhoto } from "../../services/userService";
 import { getImageUrl } from "../../helpers/getImageUrl";
+import ModalLoading from "../../modals/ModalLoading";
+import ModalPage from "../../modals/ModalPage";
+import { TeamCardModel } from "../../models/teamCardModel";
+import { getTeamInfo } from "../../services/basicDataService";
+import { downloadPhotoS3 } from "../../services/userService";
 
 const NuestroEquipoPage = () => {
   const [team, setTeam] = useState<TeamCardModel[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const getImages = async (cards: TeamCardModel[]) => {
-    for(const td of cards){
+    for (const td of cards) {
       if (!td.image) continue;
-      const base64 = await downloadProfilePhoto(td.image);
-      td.imageUrl = getImageUrl(base64);
+      const base64 = await downloadPhotoS3(td.image);
+      if (!base64.startsWith("<?xml")) {
+        td.imageUrl = getImageUrl(base64);
+      }
     }
     return cards;
   }
@@ -28,7 +30,7 @@ const NuestroEquipoPage = () => {
     setTeam(dataWithImages);
     setLoading(false);
   };
-  
+
   useEffect(() => {
     setLoading(true);
     getData();
